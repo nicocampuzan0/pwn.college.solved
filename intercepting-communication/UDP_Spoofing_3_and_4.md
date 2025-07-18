@@ -1,15 +1,21 @@
 # Problem Statement
+ ## UDP Spoofing 3
 Of course, the previous spoofing worked because you know the source port that the client was using, and were thus able to forge the server's response. This was, in fact, at the core of a very famous vulnerability in the Domain Name System that facilitates the translation of host names like https://pwn.college to the appropriate IP addresses. The vulnerability allowed attackers to forge responses from DNS servers and redirect victims to IP addresses of their choice!
 
 The fix for that vulnerability was to randomize the source port that DNS requests go out from. Likewise, this challenge no longer binds the source port to 31338. Can you still force the response?
 
 HINT: The source port is only set once per socket, whether at bind time or at the first sendto. What do you do when there's a fixed number that you don't know?
 
+ ## UDP Spoofing 4
+Let's up the game a bit: this challenge checks that the response came from the right server! Luckily, UDP is a lot easier to forge than TCP. In TCP, forging a server response requires you to know sequence numbers and a whole bunch of other inconvenient-to-guess information. Not so with UDP!
+
+Go ahead and craft the server response with scapy, as you've done with TCP, and let's see that flag fly!
+
 ## Observations
  - In order to narrow down the bruteforce probe, I looked up conventions for private ports and Linux seems to use (32768-60999). The solution
    adheres to this at least, but I ended up just going for all non-well-known ports (>1024). This is done in batches so that the system isn't overloaded with threads
  - Starting to bruteforce from the end of the list might be more efficient in the above scenario. 60 batches take only a few minutes anyway.
- - It isn't strictly necessary to have a listener running. The program output will tell you which port was discovered (along with a bunch of false positives, but the packet summary printed gives you unequivocally the source port).
+ - It isn't strictly necessary to have a listener running. The program output will tell you which port was discovered (along with a bunch of false positives if you use `sr1` instead of `send`, but the packet summary printed gives you unequivocally the source port).
    - ```
      # Output excerpt. It is port 43454 that we want as it is the source port in the packet summary
      IP / UDP 10.0.0.2:43454 > 10.0.0.1:31337 / Raw
@@ -22,7 +28,7 @@ HINT: The source port is only set once per socket, whether at bind time or at th
      Port 43527
      Port 43520
      ```
- - If you don't want to have a listener in the background, using scapy to send the flag exfiltration message with the function `sr1` once you figure out the port should return you the flag (I did this for the previous challenge).
+ - If you don't want to have a listener in the background, using scapy to send the flag exfiltration message with the function `sr1` once you figure out the port should return you the flag.
    In that case, remove the scapy import line at the top of the port prober code and you can run the code directly from scapy.
 
 # Solution
@@ -41,6 +47,8 @@ print(f"Received from {addr}: {msg.decode()}")
 
 ## Port prober
 - `python udp_prober.py`
+- for challenge 4, I didn't like the output with false positives so the `probe_port` code became just the definition of pkt and `send` instead of `sr1`
+  - Note: Add appropriate `src` value to the IP layer for challenge 4 to spoof the UDP packet.
 ```
 import threading
 from scapy.all import *
