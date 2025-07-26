@@ -1,6 +1,26 @@
-# Problem Statement
+# Base Problem Statement
+Though the core of the AES crypto algorithm is thought to be secure (not proven to be, though: no one has managed to do that! But no one has managed to significantly break the crypto in the 20+ years of its use, either), this core only encrypts 128-bit (16 byte) blocks at a time. To actually use AES in practice, one must build a cryptosystem on top of it.
+
+In the previous level, we used the AES-ECB cryptosystem: an Electronic Codebook Cipher where every block is independently encrypted by the same key. This system is quite simple but, as we will discover here, extremely susceptible to a certain class of attack.
+
+Cryptosystems are held to very high standard of ciphertext indistinguishability. That is, an attacker that lacks the key to the cryptosystem should not be able to distinguish between pairs of ciphertext based on the plaintext that was encrypted. For example, if the attacker looks at ciphertexts UVSDFGIWEHFBFFCA and LKXBFVYASLJDEWEU, and is able to determine that the latter was produced from the plaintext EEEEFFFFGGGGHHHH (or, in fact, figure out any information about the plaintext at all!), the cryptosystem is considered broken. This property must hold even if the attacker already knows part or all of the plaintext, a setting known as the Known Plaintext Attack, or can even control part or all of the plaintext, a setting known as the Chosen Plaintext Attack!
+
+ECB is susceptible to both known and chosen plaintext attack. Because every block is encrypted with the same key, with no other modifications, an attacker can observe identical ciphertext across different blocks that have identical plaintext. Moreover, if the attacker can choose or learn the plaintext associated with some of these blocks, they can carefully build a mapping from known-plaintext to known-ciphertext, and use that as a lookup table to decrypt other matching ciphertext!
+
+In this level, you will do just this: you will build a codebook mapping from ciphertext to chosen plaintext, then use that to decrypt the flag. Good luck!
+
+## HTTP Problem Statement
+Okay, now we'll try that attack in a slightly more realistic scenario. Can you remember your SQL to carry out the attack and recover the flag?
+
+## Base64 Problem Statement
+For historical reasons, different encodings tend to gain traction in different contexts. For example, on the web, the standard way to encode binary data is base64, an encoding that you learned in Dealing with Data. Channel this skill now, adapting your previous solution for base64!
+
+You'll (re-)note that base64 isn't as convenient to reason about as hex. Why do people use it? One reason: every byte requires two hex letters to encode, whereas base64 encodes every 3 bytes with 4 letters. This means that, when sending each letter as a byte itself over the network, for example, base64 is marginally more efficient. On the other hand, it's a headache to work with, because of the unclean bit boundaries!
+
+Throughout the rest of the modules, challenges might use hex or base64, as our heart desires. It's important to be able to handle either!
 
 ## Observations
+- This solution works for both HTTP challenges, b64 or not.
 - The tricky part here is exfiltrating the chosen plaintext, bruteforcing is trivial like in the first CPA challenge.
   - To achieve this, we can use the `substr` SQL function so we can still guess character by character and not worry about the 16B padding for AES throwing us off since we match the input length.
 - However, when interacting directly with the process that encrypts/decrypts like before, efficiency didn't really matter, now we are doing this through a web server.
