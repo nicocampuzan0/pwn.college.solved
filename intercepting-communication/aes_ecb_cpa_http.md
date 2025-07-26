@@ -21,12 +21,19 @@ Throughout the rest of the modules, challenges might use hex or base64, as our h
 
 ## Observations
 - This solution works for both HTTP challenges, b64 or not.
-- The tricky part here is exfiltrating the chosen plaintext, bruteforcing is trivial like in the first CPA challenge.
+  
+- The tricky part here is exfiltrating the chosen plaintext. Bruteforcing is trivial like in the first CPA challenge.
+
   - To achieve this, we can use the `substr` SQL function so we can still guess character by character and not worry about the 16B padding for AES throwing us off since we match the input length.
+
 - However, when interacting directly with the process that encrypts/decrypts like before, efficiency didn't really matter, now we are doing this through a web server.
+
   - We can speed things up by using a subset of the printable ASCII characters (note, skip `#` for these queries...) to reduce the search space to 82 characters.
+
   - We can also build a lookup table for our flag substring queries, since these don't change and we would be making on average 41 queries for the encrypted flag substring, when we only need 1.
+
     - Using a dictionary might have been more pythonic, but when I set up the problem I was thinking a table might be faster for a small range of contiguous integers, which made my logic a bit hacky and ugly
+
 - Also note that the known `pwn.college{` prefix is irrelevant. It's just the first step in knowing I can choose plaintext to encrypt and match the flag ciphertext as below that I left in there. We could start from indrex 13 instea:
   - ```
     # python -c "import requests; print(requests.get('http://challenge.localhost/?query=substr(flag, 1, 12)').text)"
@@ -52,6 +59,7 @@ Throughout the rest of the modules, challenges might use hex or base64, as our h
     #        <b>Results:</b><pre>e382562c7be43524d6d91906a940e5ce</pre>
     #        </body></html>
     ```
+
 ## Solution
 ```
 from pwn import *
