@@ -11,6 +11,9 @@ In security terms, CBC preserves (imperfectly, as we'll see in the next few chal
 
 We will explore this concept in this level, where a task dispatcher will dispatch encrypted tasks to a task worker. Can you force a flag disclosure?
 
+## Problem 2 : Resizing
+So now you can modify AES-CBC encrypted data without knowing the key! But you got lucky: sleep and flag! were the same length. What if you want to achieve a different length?
+
 
 ## Observations
 - From https://www.highgo.ca/2019/08/08/the-difference-in-five-modes-in-the-aes-encryption-algorithm/ 
@@ -23,7 +26,7 @@ We will explore this concept in this level, where a task dispatcher will dispatc
   - We know the ciphertext is `sleep ^ IV`, but we also know messing with the ciphertext to affect the decryption operation is a blind attack that should be computationally infeasible by definition.
   - We know that XOR is commutative and self-inverse. These two combined properties mean we can XOR inverses of the previous operators in any order and cancel them.
     - Therefore, if we cancel out the known operators, and XOR that with our chosen plaintext, the worker will end up with just our chosen plaintext.
-
+- Also, this works for the next challenge - AES-CBC Resizing.
 
 # Solution
 ```
