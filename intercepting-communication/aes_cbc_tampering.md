@@ -26,7 +26,7 @@ So now you can modify AES-CBC encrypted data without knowing the key! But you go
   - We know the ciphertext is `sleep ^ IV`, but we also know messing with the ciphertext to affect the decryption operation is a blind attack that should be computationally infeasible by definition.
   - We know that XOR is commutative and self-inverse. These two combined properties mean we can XOR inverses of the previous operators in any order and cancel them.
     - Therefore, if we cancel out the known operators, and XOR that with our chosen plaintext, the worker will end up with just our chosen plaintext.
-- Also, this works for the next challenge - AES-CBC Resizing.
+- Also, this works for the next challenge - AES-CBC Resizing (Removing the `!` appended to `flag`.
 
 # Solution
 ```
