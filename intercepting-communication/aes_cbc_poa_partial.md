@@ -28,6 +28,7 @@ RESOURCES: You might find some animated/interactive POA demonstrations useful:
     <img width="823" height="472" alt="image" src="https://github.com/user-attachments/assets/e1f70930-8f93-4aa1-b4fd-80dd8c461b3a" />
 
 - Make sure you receive the first output line from `/challenge/worker` before the guessing loop. Otherwise, it will seem like the first guess for the last byte, `\x00`, succeeded, and you'll never find the password.
+- If it doesn't work - I did not take care of the edge case where the original padding actually happens to be 2 bytes and the first right guess is the one that makes the decoded ciphertext be `\x02` instead of `\x01`. I think it's easier to play the odds and re-start the challenge if it doesn't work than adding the extra logic. You would have to keep track of the first guess and, if no successful guess is found for the second-to-last byte, or the password ends up being wrong, restart the loop and skip the saved first guess for the last byte.
 
 # Solution
 ```
