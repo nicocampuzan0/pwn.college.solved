@@ -34,7 +34,6 @@ RESOURCES: You might find some animated/interactive POA demonstrations useful:
 ```
 #!/opt/pwn.college/python
 
-import os
 from pwn import *
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
