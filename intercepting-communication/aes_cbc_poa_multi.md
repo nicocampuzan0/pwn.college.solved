@@ -12,7 +12,6 @@ This is one of the hardest challenges in this module, but you can get your head 
 
 ## Solution
 ```
-import os
 from pwn import *
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
